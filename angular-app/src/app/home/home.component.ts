@@ -22,9 +22,9 @@ export class HomeComponent implements OnInit{
           this.usersList.push(obj)
         }))
       },
-      error=>{
-        alert(error);
-      })
+     error=>{
+  alert(JSON.stringify(error));
+}
   }
 
   addUser(firstname:string,lastname:string){
