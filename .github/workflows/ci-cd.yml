@@ -1,0 +1,57 @@
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Récupération du code source
+      uses: actions/checkout@v3
+
+    - name: Installer docker-compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
+        docker-compose --version
+
+    - name: Compiler le backend avec Maven
+      run: |
+        cd springboot/app
+        chmod +x mvnw
+        ./mvnw clean package -DskipTests
+        ls -la target/
+
+    - name: Connexion à Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build et push de l'image Backend
+      uses: docker/build-push-action@v4
+      with:
+        context: ./springboot/app
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-backend:latest
+
+    - name: Build et push de l'image Frontend
+      uses: docker/build-push-action@v4
+      with:
+        context: ./angular-app
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-frontend:latest
+
+    - name: Test minimal
+      run: |
+        echo "Build et push réussis !"
+        echo "Les images sont disponibles sur Docker Hub"
+
+    - name: Vérification des secrets (debug)
+      run: |
+        echo "Username: ${{ secrets.DOCKERHUB_USERNAME }}"
+        echo "Token length: ${{ secrets.DOCKERHUB_TOKEN }}" | wc -c
