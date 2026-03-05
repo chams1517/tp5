@@ -39,10 +39,7 @@ jobs:
     # Build and push backend image
     - name: Build & Push backend image
       run: |
-        docker buildx build \
-          --push \
-          --tag ${{ secrets.DOCKERHUB_USERNAME }}/spring-app:latest \
-          ./springboot/app
+        docker buildx -t ${{ secrets.DOCKERHUB_USERNAME }}/spring-app:latest  ./springboot/app
 
     # Build and push frontend image
     - name: Build & Push frontend image
