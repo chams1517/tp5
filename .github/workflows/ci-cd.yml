@@ -13,18 +13,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Install Java
+      # 2. Installer Java pour Spring Boot
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
-        java-version: '11'
-        distribution: 'temurin'
+          java-version: '11'
+          distribution: 'temurin'
 
-    # Build Spring Boot jar
+      # 3. Build backend avec Maven
     - name: Build backend with Maven
       run: |
-        cd springboot/app
-        mvn clean package -DskipTests
+          cd springboot/app
+          mvn clean package -DskipTests
 
     # Login to Docker Hub
     - name: Login to Docker Hub
